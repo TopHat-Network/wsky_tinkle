@@ -28,4 +28,4 @@ Tinkle is the company name in the HD Universe of GTA. Primarily a a Mobile Phone
 
 ### **Can I use it?**
 You can try I guess, I'm too busy to offer support and I'm still building tinkle so it's constantly changing.
-You'll also probably need the API, which you (https://github.com/WhiskeeDev/tinkle-api)[can find here].
+You'll also probably need the API, which you [can find here](https://github.com/WhiskeeDev/tinkle-api).
