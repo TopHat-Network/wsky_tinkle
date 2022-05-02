@@ -3,6 +3,13 @@ HAHA that means peepee...
 
 ---
 
+## READ ME BEEYATCH
+Use the `Releases` on the right side (or whever github moves it to in the future) to get the latest "good to go" release of Tinkle.
+
+If there isn't a version yet, then you're too early. Wait until I've finished at least v1 :P
+
+---
+
 ## FAQ
 
 ### **Why is it called "Tinkle"?**
