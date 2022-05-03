@@ -1,5 +1,7 @@
 Delay = ms => new Promise(res => setTimeout(res, ms));
 
+const logTitleCard = '[Tinkle]';
+
 const baseGarageData = {
   2: { // 2 Car Garage
     playerEnterPosition: [173, -1008, -99, 360],
@@ -51,8 +53,8 @@ function getDistance (location1, location2) {
 }
 
 function isPositionInAGarage (pos) {
-  return Object.keys(garages).some(key => {
-    const garage = garages[key];
+  return Object.keys(baseGarageData).some(key => {
+    const garage = baseGarageData[key];
     const distance = getDistance(pos, garage.centerPosition);
     return distance <= garage.radius;
   })

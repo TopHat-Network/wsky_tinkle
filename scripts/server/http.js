@@ -46,6 +46,11 @@ async function httpRequest (url, config = {}) {
     requestOptions.body = config.body
   }
 
+  console.debug({
+    url,
+    requestOptions
+  })
+
   return new Promise((resolve, reject) => {
     const request = http.request(url, requestOptions, (response) => {
       let responseData = ''

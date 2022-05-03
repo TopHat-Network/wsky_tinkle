@@ -89,16 +89,15 @@ async function populateGarage(vehicles) {
     await promise;
 
     const [x, y, z, h] = garage.vehicleSpawnPositions[index];
-    const vehicleId = await generateVehicle(vehicleData.model, [x, y, z], h, {
+    const [vehicleId] = await generateVehicle(vehicleData.model, [x, y, z], h, {
       clientSide: true
     })
-
-    // applyVehicleMods(vehicleId, vehicleData); // Apply the vehicle mods. - Not available as wsky_vehicles has not been brought over yet.
     currentGarageVehicles[vehicleId] = vehicleData; // Store the vehicle data so we can delete it later.
+    applyVehicleMods(vehicleId, vehicleData); // Apply the vehicle mods. - Not available as wsky_vehicles has not been brought over yet.
   }, undefined)
 }
 
-onNet('tinke:requestPopulateGarage', populateGarage)
+onNet('tinkle:responsePopulateGarage', populateGarage)
 
 onNet('tinkle:playerEnteredVehicle', async vehicle => {
   const garage = baseGarageData[currentGarage];
@@ -117,9 +116,9 @@ onNet('tinkle:playerEnteredVehicle', async vehicle => {
   const vehicleData = currentGarageVehicles[vehicle];
   cleanGarage(garage); // Clean up any vehicles that might be in the garage.
 
-  const newVehicle = await generateVehicle(vehicleData.model, [0, 0, 0], 0); // Spawn the vehicle.
+  const [newVehicle] = await generateVehicle(vehicleData.model, [0, 0, 0], 0); // Spawn the vehicle.
   SetPedIntoVehicle(GetPlayerPed(-1), newVehicle, -1); // Put the player into the vehicle.
-  // applyVehicleMods(newVehicle, vehicleData); // Apply the vehicle mods. - Not available as wsky_vehicles has not been brought over yet.
+  applyVehicleMods(newVehicle, vehicleData); // Apply the vehicle mods. - Not available as wsky_vehicles has not been brought over yet.
 
   let [x, y, z] = [0, 0, 0]; // Pulled over from old code, looks dumb should try to remove it later.
   if (playerLocationBeforeEnteringGarage) {
@@ -133,8 +132,8 @@ onNet('tinkle:playerEnteredVehicle', async vehicle => {
   const roadPos = [roadPos1, roadPos2].reduce((prev, curr) => {
     const currLoc = curr;
     const prevLoc = prev;
-    const distance = getDistance(vehiclePos, currLoc);
-    return distance < getDistance(vehiclePos, prevLoc) ? curr : prev;
+    const distance = getDistance([x, y, z], currLoc);
+    return distance < getDistance([x, y, z], prevLoc) ? curr : prev;
   });
 
   const [roadX, roadY, roadZ] = roadPos;
