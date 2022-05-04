@@ -2,8 +2,16 @@ RegisterNetEvent('tinkle:playerAuthenticate');
 
 const playerUUIDs = {}; // Stores the UUIDs of players mapped by their player handle.
 
-on('playerJoining', () => authenticatePlayerWithTinkle(source));
-onNet('tinkle:playerAuthenticate', () => authenticatePlayerWithTinkle(source));
+function handleReauth(playerSrc) {
+  authenticatePlayerWithTinkle(playerSrc)
+  .catch(err => {
+    console.error(logTitleCard, `${playerSrc} failed to authenticate with Tinkle`, err);
+    DropPlayer(playerSrc, "Failed to authenticate with Tinkle - Please contact an administrator. https://tophat-network.co.uk");
+  });
+}
+
+on('playerJoining', () => handleReauth(source));
+onNet('tinkle:playerAuthenticate', () => handleReauth(source));
 
 /**
  * 
@@ -34,7 +42,7 @@ async function getPlayerVehicles(playerSrc, vehicleName) {
 /**
  * 
  * @param {number} playerSrc The player handle.
- * @returns {string} The player's Tinkle UUID.
+ * @returns {Promise<string>} The player's Tinkle UUID.
  */
 async function authenticatePlayerWithTinkle(playerSrc) {
   const playerName = GetPlayerName(playerSrc);
