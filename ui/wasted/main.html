@@ -1,0 +1,244 @@
+<html>
+  <body class="hide">
+    <div class="banner">
+      <div class="title">
+        Wasted
+      </div>
+      <div class="subtitle">
+        <div id="travel_text">Travelling to <code id="hospital_name">hospital_name</code></div>
+        <div id="loading" class="">Waiting for ambulance...</div>
+      </div>
+    </div>
+    <div class="respawnText">
+      <div id="respawn_text">You can also leave the ambulance now with <code id="respawn_hp">respawn_hp</code>% health</div>
+    </div>
+    <!-- <div class="causeOfDeath">
+      <div class="codContainer">
+        <div class="title">
+          Cause of Death
+        </div>
+        <div class="message">
+          <div>You were killed by <code id="attacker_name">attacker_name</code>.</div>
+          <div>Using a <code id="attacker_weapon">attacker_weapon</code>, they were at <code id="attacker_hp">attacker_hp</code> Health.</div>
+        </div>
+        <div class="media">
+          <img id="attacker_image" src="https://via.placeholder.com/200x200?text=User+Image" alt="attacker_image">
+        </div>
+      </div>
+    </div> -->
+  </body>
+  <script>
+    let closestHospital = {
+      name: null
+    };
+    let respawnHealth = 0;
+    let causeOfDeath = {
+      name: null,
+      weapon: null,
+      hp: 0,
+      image: null
+    };
+    let showForceRespawn = false;
+
+    function updateUI() {
+
+      const showHospitalName = !!closestHospital.name;
+      const showRespawnHealth = !!respawnHealth && showForceRespawn;
+      const showLoading = !showHospitalName && !showRespawnHealth;
+
+      if (showHospitalName) {
+        document.getElementById('travel_text').classList.remove('hide');
+        document.getElementById('hospital_name').innerText = closestHospital.name;
+      } else {
+        document.getElementById('travel_text').classList.add('hide');
+      }
+
+      if (showRespawnHealth) {
+        document.getElementById('respawn_text').classList.remove('invisible');
+        document.getElementById('respawn_hp').innerText = respawnHealth;
+      } else {
+        document.getElementById('respawn_text').classList.add('invisible');
+      }
+
+      if (showLoading) {
+        document.getElementById('loading').classList.remove('hide');
+      } else {
+        document.getElementById('loading').classList.add('hide');
+      }
+    }
+
+    window.addEventListener('message', event => {
+      const { type, data } = event.data;
+
+      // Handle opening and closing of the UI
+      const body = document.querySelector('body');
+      if (type === 'tinkle:showWasted') body.classList.remove('hide');
+      else if (type === 'tinkle:hideWasted') body.classList.add('hide');
+
+      // Handle updating data
+      if (data) {
+        if (data.closestHospital !== undefined) closestHospital = data.closestHospital;
+        if (data.respawnHealth !== undefined) respawnHealth = data.respawnHealth;
+        if (data.causeOfDeath !== undefined) causeOfDeath = data.causeOfDeath;
+        if (data.showForceRespawn !== undefined) showForceRespawn = data.showForceRespawn;
+      }
+
+      // Update the UI
+      updateUI();
+    });
+  </script>
+  <style>
+    @import "./reset.css";
+    @import "./WDL.css";
+
+    @font-face {
+      font-family: Pricedown;
+      src: url("./pricedown.otf") format("opentype");
+    }
+
+    @font-face {
+      font-family: 'Chalet London';
+      src: url('./ChaletLondonNineteenSixty.ttf') format('truetype');
+    }
+
+    @font-face {
+      font-family: 'Chalet New York';
+      src: url('./ChaletNewYorkNineteenSixty.ttf') format('truetype');
+    }
+
+    .hide {
+      display: none;
+    }
+
+    .invisible {
+      visibility: hidden;
+    }
+
+    body {
+      padding: 0;
+      margin: 0;
+      display: grid;
+      align-content: center;
+      /* Greenscreen style green */
+      /* background-color: #00ff00;  */
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: rgb(0,0,0);
+      background: radial-gradient(circle, rgba(0,0,0,0.75) -100%, rgba(88,88,88,0.95) 200%);
+      box-shadow: inset 0 0 4rem 0 rgba(0, 0, 0, 1);
+    }
+
+    .banner {
+      position: relative;
+      color: #fafafa;
+      z-index: 2;
+      display: grid;
+      grid-template-areas: 'title' 'subtitle';
+      gap: 0;
+      padding: 1rem 0;
+      text-align: center;
+    }
+
+    .causeOfDeath {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      padding: 1rem 0;
+      justify-items: center;
+    }
+
+    .banner .title {
+      grid-area: title;
+      font-family: Pricedown;
+      font-size: 8em;
+      color: #f72c28cc;
+      line-height: 1;
+      -webkit-text-stroke: 2px black;
+    }
+
+    .banner .subtitle {
+      grid-area: subtitle;
+      font-family: 'Chalet London';
+      font-size: 1.2em;
+      color: #fafafa;
+    }
+
+    .respawnText {
+      text-align: center;
+      font-family: 'Chalet London';
+      font-size: 1.2em;
+      color: #fafafa;
+    }
+    
+    .banner::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgb(0,0,0);
+      background: linear-gradient(90deg, rgba(0,0,0,0.1) -100%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.1) 200%);
+      z-index: -1;
+    }
+
+    .codContainer {
+      padding: 1rem .5rem;
+      position: relative;
+      width: 50%;
+      display: grid;
+      grid-template: 'title media' 'message media';
+      gap: 0.5rem;
+      justify-content: space-between;
+      grid-template-rows: auto 1fr;
+    }
+
+    .codContainer .title {
+      grid-area: title;
+      font-family: Pricedown;
+      font-size: 2em;
+      color: #fffc;
+      line-height: 1
+    }
+
+    .codContainer .message {
+      grid-area: message;
+      font-family: 'Chalet London';
+      font-size: 1.2em;
+      color: #fafafa;
+      display: grid;
+      align-content: space-evenly;
+      grid-template-rows: max-content max-content;
+    }
+
+    .codContainer .media {
+      grid-area: media;
+      font-family: 'Chalet London';
+      font-size: 1.2em;
+      color: #fafafa;
+      border: 2px solid rgba(255,255,255,0.25);
+      border-radius: 2px;
+    }
+
+    .codContainer::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: -1;
+      border: 2px solid rgba(0,0,0,0.25);
+      border-radius: 2px;
+    }
+  </style>
+</html>
